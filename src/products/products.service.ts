@@ -19,12 +19,13 @@ export class ProductsService {
         return await this.productRepository.findOneById(id);
     }
 
-    async createProduct(productEntity: ProductEntity): Promise<ProductEntity> {
+    async createProduct(productEntity: ProductEntity, image): Promise<ProductEntity> {
         productEntity.slug = this.slugify(productEntity.name);
+        productEntity.image = image
         return await this.productRepository.save(productEntity);
     }
 
-    async updateProduct(id: string, productEntity: ProductEntity): Promise<ProductEntity> {
+    async updateProduct(id: string, productEntity: ProductEntity, image): Promise<ProductEntity> {
         const product = await this.findOne(id)
         if (product) {
             const {name, description, price, isAvailable} = productEntity
@@ -34,6 +35,7 @@ export class ProductsService {
             product.description = description
             product.price = price
             product.isAvailable = isAvailable
+            product.image = image
             product.save()
 
             return product

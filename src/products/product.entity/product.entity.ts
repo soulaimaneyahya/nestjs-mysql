@@ -20,6 +20,9 @@ export class ProductEntity extends BaseEntity {
     @Column({ default: true})
     isAvailable: boolean;
 
+    @Column()
+    image: string;
+
     @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP"})
     createdAt: string;
 
