@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ProductEntity } from "./product.entity/product.entity";
@@ -8,7 +8,8 @@ export class ProductsService {
     constructor(
         @InjectRepository(ProductEntity)
         private productRepository: Repository<ProductEntity>
-    ){}
+    ){
+    }
 
     async findAll(): Promise<ProductEntity[]> {
         return await this.productRepository.find();
@@ -18,8 +19,9 @@ export class ProductsService {
         return await this.productRepository.findOneById(id);
     }
 
-    async createProduct(product: ProductEntity): Promise<ProductEntity> {
-        return await this.productRepository.save(product);
+    async createProduct(productEntity: ProductEntity): Promise<ProductEntity> {
+        productEntity.slug = this.slugify(productEntity.name);
+        return await this.productRepository.save(productEntity);
     }
 
     async updateProduct(id: string, productEntity: ProductEntity): Promise<ProductEntity> {
@@ -28,6 +30,7 @@ export class ProductsService {
             const {name, description, price, isAvailable} = productEntity
 
             product.name = name
+            product.slug = this.slugify(name)
             product.description = description
             product.price = price
             product.isAvailable = isAvailable
@@ -38,7 +41,22 @@ export class ProductsService {
     }
 
     async destroyProduct(id: string) {
-        const product = await this.findOne(id)
-        return await this.productRepository.remove(product)
+        const deleteResponse = await this.productRepository.softDelete(id);
+        if (deleteResponse.affected) {
+            return deleteResponse
+        }
+    }
+
+    async restoreProduct(id: string) {
+        await this.productRepository.restore(id);
+        return this.findOne(id)
+    }
+
+    slugify(name: string): string {
+        const slug = name
+        .toLowerCase().trim()
+        .replace(' ', '-')
+
+        return slug
     }
 }

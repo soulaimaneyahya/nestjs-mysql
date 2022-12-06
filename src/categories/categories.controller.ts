@@ -1,33 +1,33 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from "@nestjs/common";
-import { ProductEntity } from "./product.entity/product.entity";
-import { ProductsService } from "./products.service";
+import { CategoriesService } from "./categories.service";
+import { CategoryEntity } from "./category.entity/category.entity";
 
-@Controller('products')
-export class ProductsController {
-    constructor(private readonly productsService: ProductsService){}
+@Controller('categories')
+export class CategoriesController {
+    constructor(private readonly categoriesService: CategoriesService){}
 
     @Get()
     async fetchAll(@Res() response) {
-        const products = await this.productsService.findAll();
+        const categories = await this.categoriesService.findAll();
         return response.status(HttpStatus.OK).json({
-            products
+            categories
         })
     }
 
     @Post()
-    async createProduct(@Res() response, @Body()productEntity: ProductEntity) {
-        const product = await this.productsService.createProduct(productEntity);
+    async createCategory(@Res() response, @Body()categoryEntity: CategoryEntity) {
+        const category = await this.categoriesService.createCategory(categoryEntity);
         return response.status(HttpStatus.CREATED).json({
-            product
+            category
         })
     }
 
     @Get('/:id')
     async findById(@Res() response, @Param('id') id) {
-        const product = await this.productsService.findOne(id);
-        if (product) {
+        const category = await this.categoriesService.findOne(id);
+        if (category) {
             return response.status(HttpStatus.OK).json({
-                product
+                category
             })   
         } else {
             return response.status(HttpStatus.NOT_FOUND).json({
@@ -37,11 +37,11 @@ export class ProductsController {
     }
 
     @Put('/:id')
-    async updateProduct(@Res() response, @Param('id') id, @Body()productEntity: ProductEntity) {
-        const product = await this.productsService.updateProduct(id, productEntity)
-        if (product) {
+    async updateCategory(@Res() response, @Param('id') id, @Body()categoryEntity: CategoryEntity) {
+        const category = await this.categoriesService.updateCategory(id, categoryEntity)
+        if (category) {
             return response.status(HttpStatus.CREATED).json({
-                product
+                category
             })
         } else {
             return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -51,10 +51,10 @@ export class ProductsController {
     }
 
     @Delete('/:id')
-    async destroyProduct(@Res() response, @Param('id') id) {
-        if (await this.productsService.destroyProduct(id)) {
+    async destroyCategory(@Res() response, @Param('id') id) {
+        if (await this.categoriesService.destroyCategory(id)) {
             return response.status(HttpStatus.OK).json({
-                "message": "Product Deleted"
+                "message": "category Deleted"
             })
         } else {
             return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -64,11 +64,11 @@ export class ProductsController {
     }
 
     @Post('/:id')
-    async restoreProduct(@Res() response, @Param('id') id) {
-        const product = await this.productsService.restoreProduct(id)
-        if (product) {
+    async restoreCategory(@Res() response, @Param('id') id) {
+        const category = await this.categoriesService.restoreCategory(id)
+        if (category) {
             return response.status(HttpStatus.OK).json({
-                product
+                category
             })
         } else {
             return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

@@ -1,4 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { CategoryEntity } from 'src/categories/category.entity/category.entity'
 import { ProductEntity } from 'src/products/product.entity/product.entity'
 
 export const typeOrmOptions: TypeOrmModuleOptions = {
@@ -8,6 +9,6 @@ export const typeOrmOptions: TypeOrmModuleOptions = {
     username: 'root',
     password: '',
     database: 'nestjs-products',
-    entities: [ProductEntity],
+    entities: [ProductEntity, CategoryEntity],
     synchronize: true,
 }
